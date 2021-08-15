@@ -59,7 +59,7 @@
     var texts = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"]
     var resultDataBuffer;
     var parser, xmlDoc;
-    
+
     function getFile() {
         document.getElementById("upfile").click();
     }
@@ -79,23 +79,23 @@
             $("div.result").css("display", "block")
         }
         var realFile;
-        if(typeof this.files != "undefined" ) {
+        if (typeof this.files != "undefined") {
             realFile = this.files[0]
         } else realFile = files[0]
         reader.readAsArrayBuffer(realFile);
     }
-    function preventDefaults (e) {
+    function preventDefaults(e) {
         e.preventDefault()
         e.stopPropagation()
-        }
+    }
     $(document).ready(function () {
         document.getElementById("uploadFile").addEventListener('drop', fileDrop, false)
-        ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            document.getElementById("uploadFile").addEventListener(eventName, preventDefaults, false)
-        })
+            ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                document.getElementById("uploadFile").addEventListener(eventName, preventDefaults, false)
+            })
         // On file upload, read file as array buffer, decrypt and create editor tables.
         $("input#upfile").change(fileProcess)
-        
+
     });
 
     function fileDrop(e) {
@@ -132,6 +132,8 @@
         <p>MYSTERY HATCH CODE:</p>
         <strong><span id="code-result1">0000</span><br><span id="code-result2">ZERO - ZERO - ZERO - ZERO</span></strong>
     </div>
+    <h5>GitHub: <a href="https://github.com/emreyigitcbc" style="text-decoration: none; color: white;">@emreyigitcbc</a>
+    </h5>
 </body>
 
 </html>
