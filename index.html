@@ -1,0 +1,137 @@
+<html>
+
+<head>
+    <title>Sheltered Mystery Hatch Password Finder - emreyigitcbc</title>
+</head>
+<meta charset="utf-8">
+<style>
+    body {
+        padding: 20px;
+        font-size: 16px;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #333;
+    }
+
+    div#uploadFile {
+        margin: 0;
+        padding: 10px;
+        border: none;
+        background: darkgray;
+        color: black;
+        font-family: "Arial Black", Arial;
+        width: 100px;
+        border: dashed 1px gray;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    div#uploadFile:hover {
+        margin: 0;
+        padding: 10px;
+        border: none;
+        background: rgb(189, 188, 188);
+        color: black;
+        font-family: "Arial Black", Arial;
+        width: 100px;
+        border: dashed 1px gray;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    div.result {
+        margin: 0;
+        border: 3px solid black;
+        border-radius: 20px;
+        padding: 20px;
+        font-family: "Arial Black", Arial;
+        text-align: center;
+    }
+
+    span#code-result1,
+    span#code-result2 {
+        color: green;
+    }
+</style>
+<script src="./jquery.min.js"></script>
+<script>
+    var texts = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"]
+    var resultDataBuffer;
+    var parser, xmlDoc;
+    
+    function getFile() {
+        document.getElementById("upfile").click();
+    }
+
+    function fileProcess(files) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var result = encrypt(this.result);
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(result.trim(), "application/xml");
+            var x = xmlDoc.evaluate("/root/FamilyManager/particleTint", xmlDoc, null, XPathResult.ANY_TYPE, null);
+            var result = x.iterateNext().attributes
+            var code = result[0].nodeValue + result[1].nodeValue + result[2].nodeValue + result[3].nodeValue
+            var codeText = texts[Number(result[0].nodeValue)] + " - " + texts[Number(result[1].nodeValue)] + " - " + texts[Number(result[2].nodeValue)] + " - " + texts[Number(result[3].nodeValue)]
+            $("span#code-result1").html(code)
+            $("span#code-result2").html(codeText)
+            $("div.result").css("display", "block")
+        }
+        var realFile;
+        if(typeof this.files != "undefined" ) {
+            realFile = this.files[0]
+        } else realFile = files[0]
+        reader.readAsArrayBuffer(realFile);
+    }
+    function preventDefaults (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        }
+    $(document).ready(function () {
+        document.getElementById("uploadFile").addEventListener('drop', fileDrop, false)
+        ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.getElementById("uploadFile").addEventListener(eventName, preventDefaults, false)
+        })
+        // On file upload, read file as array buffer, decrypt and create editor tables.
+        $("input#upfile").change(fileProcess)
+        
+    });
+
+    function fileDrop(e) {
+        let dt = e.dataTransfer
+        let files = dt.files
+        fileProcess(files)
+    }
+    // Encrypt/decrypt file function.
+    // Found on: https://steamcommunity.com/sharedfiles/filedetails/?id=911776607
+    function encrypt(buffer) {
+        var encrypters = [172, 115, 254, 242, 170, 186, 109, 171, 48, 58, 139, 167, 222, 13, 21, 33, 74];
+        var bytes = new Uint8Array(buffer);
+        var output = "";
+        for (var i = 0; i < bytes.length; i++) {
+            var oldValue = bytes[i];
+            var encrypter = encrypters[i % encrypters.length];
+            bytes[i] = oldValue ^ encrypter;
+            output += String.fromCharCode(bytes[i]);
+        }
+        resultDataBuffer = buffer;
+        return output;
+    }
+</script>
+
+<body>
+    <h2>Welcome to Sheltered Mystery Hatch Password Finder!</h2>
+    <p>To use it, just drag&drop your save file to "Upload Save" button or press & select your save.</p>
+    <small>Your save file located in: <code>your_game_folder/saves/gamedata_0n.dat</code></small>
+    <p>
+    <div id="uploadFile" onclick="getFile()">Upload File</div>
+    <div style='height: 0px;width:0px; overflow:hidden;'><input id="upfile" type="file" /></div>
+    </p>
+    <div class="result" style="display: none;">
+        <p>MYSTERY HATCH CODE:</p>
+        <strong><span id="code-result1">0000</span><br><span id="code-result2">ZERO - ZERO - ZERO - ZERO</span></strong>
+    </div>
+</body>
+
+</html>
